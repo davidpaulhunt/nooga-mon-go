@@ -1,0 +1,23 @@
+{
+  "list": [{
+    "name": "Tennessee Aquarium",
+    "key": "aquarium",
+    "lat": 35.056355,
+    "lng": -85.311214
+  }, {
+    "name": "Coolidge Park",
+    "key": "coolidge",
+    "lat": 35.060873,
+    "lng": -85.307743
+  }, {
+    "name": "Hunter Art Museum",
+    "key": "hunter",
+    "lat": 35.055873,
+    "lng": -85.306418
+  }, {
+    "name": "Chattanooga Zoo",
+    "key": "zoo",
+    "lat": 35.042595,
+    "lng": -85.282031
+  }]
+}

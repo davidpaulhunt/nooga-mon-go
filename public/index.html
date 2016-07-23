@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>NoogaMonGo</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome to NoogaMonGo - your resource for chattanooga PokemonGO hotspots.</h1>
+    <div id="map"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var hotzones = [{
+        name: 'Tennessee Aquarium',
+        key: 'aquarium',
+        lat: 35.056355,
+        lng: -85.311214,
+      }, {
+        name: 'Coolidge Park',
+        key: 'coolidge',
+        lat: 35.060873,
+        lng: -85.307743,
+      }, {
+        name: 'Hunter Art Museum',
+        key: 'hunter',
+        lat: 35.055873,
+        lng: -85.306418,
+      }, {
+        name: 'Chattanooga Zoo',
+        key: 'zoo',
+        lat: 35.042595,
+        lng: -85.282031,
+      }];
+      var map;
+      var markers = {};
+      var baseLocations = {};
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {
+            lat: 35.049351,
+            lng: -85.296988,
+          },
+          zoom: 15
+        });
+
+        hotzones.forEach(function eachHotzone(hz) {
+          var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(hz.lat, hz.lng),
+            title: hz.name,
+          });
+
+          marker.setMap(map);
+
+          baseLocations[hz.key] = { lat: hz.lat, lng: hz.lng };
+          markers[hz.key] = [];
+        });
+
+        var socket = io.connect('http://localhost:3000');
+        socket.on('pokemon_data', function onData(data) {
+          var key = data.place;
+          markers[key].forEach(function eachExistingMarker(m) { m.setMap(null); });
+          markers[key] = [];
+          data.pokemon.forEach(function eachNewPokemon(pokemon) {
+            var location = pokemon.location || baseLocations[key];
+            location = new google.maps.LatLng(location.lat, location.lng);
+            var marker = new google.maps.Marker({
+              position: location,
+              title: pokemon.name,
+              icon: {
+                url: pokemon.img,
+                size: new google.maps.Size(25, 25),
+              },
+            });
+            marker.setMap(map);
+            markers[key].push(marker);
+          });
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjiUR2LLZDl4vlJ2BWGfvUsMa3V1AfQLc&callback=initMap"
+    async defer></script>
+  </body>
+</html>
